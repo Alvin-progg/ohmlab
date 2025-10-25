@@ -94,7 +94,7 @@ export default function CircuitSimulator() {
             {/* Ohm's Law Formula */}
             <Card className="bg-slate-800/50 border-purple-500/20 backdrop-blur">
               <CardHeader>
-                <CardTitle className="text-white text-lg">Ohm's Law</CardTitle>
+                <CardTitle className="text-white text-lg">Ohm&apos;s Law</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-1 text-sm text-purple-200/90 font-mono">
@@ -482,7 +482,7 @@ export default function CircuitSimulator() {
             <CardHeader>
               <CardTitle className="text-white">Real-Time Calculations</CardTitle>
               <CardDescription className="text-purple-200">
-                Live circuit analysis based on Ohm's Law
+                Live circuit analysis based on Ohm&apos;s Law
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
