@@ -41,7 +41,7 @@ export default function CircuitSimulator() {
             OhmLab: Interactive Circuit Playground
           </h1>
           <p className="text-lg text-purple-200">
-            Explore Ohm's Law through interactive simulation
+            Explore Ohm&apos;s Law through interactive simulation
           </p>
         </motion.div>
 
