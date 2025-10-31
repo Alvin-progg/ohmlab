@@ -49,7 +49,7 @@ function Wire({ start, end, color }: { start: [number, number, number]; end: [nu
 
 function ParticleTrail({ points, speed, count = 8 }: { points: [number, number, number][]; speed: number; count?: number }) {
   const particles = useMemo(() => new Array(count).fill(0).map(() => ({ t: Math.random() })), [count]);
-  const refs = useRef<any[]>([]);
+  const refs = useRef<(THREE.Mesh | null)[]>([]);
 
   useFrame((_state, delta) => {
     particles.forEach((p, i) => {
@@ -77,7 +77,7 @@ function ParticleTrail({ points, speed, count = 8 }: { points: [number, number, 
 }
 
 function ParticleSmoke({ position, power, count = 40 }: { position: [number, number, number]; power: number; count?: number }) {
-  const refs = useRef<any[]>([]);
+  const refs = useRef<(THREE.Mesh | null)[]>([]);
   const particles = useMemo(
     () =>
       new Array(count).fill(0).map(() => ({
@@ -114,9 +114,9 @@ function ParticleSmoke({ position, power, count = 40 }: { position: [number, num
       const scale = p.scale * (0.8 + lifeRatio * 1.6);
 
       const el = refs.current[i];
-      if (el) {
+      if (el && el.material) {
         el.position.set(position[0] + p.x, position[1] + 0.8 + p.y, position[2] + p.z);
-        el.material.opacity = opacity;
+        (el.material as THREE.MeshStandardMaterial).opacity = opacity;
         el.scale.set(scale, scale, scale);
         el.rotation.z = p.rot + lifeRatio * 1.5;
       }
@@ -160,7 +160,7 @@ function ResistorMesh({ position, power }: { position: [number, number, number];
   });
 
   return (
-    <group position={position as any}>
+    <group position={position}>
       <mesh ref={meshRef}>
         <cylinderGeometry args={[0.6, 0.6, 1.8, 24]} />
         <meshStandardMaterial color={"#D2B48C"} emissive={new THREE.Color(0, 0, 0)} emissiveIntensity={0} />
@@ -171,11 +171,11 @@ function ResistorMesh({ position, power }: { position: [number, number, number];
 }
 
 function EffectsLoader({ power }: { power: number }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [Effects, setEffects] = useState<any>(null);
 
   useEffect(() => {
     let mounted = true;
-    // @ts-ignore - optional dependency
     import("@react-three/postprocessing")
       .then((mod) => {
         if (!mounted) return;
@@ -188,15 +188,15 @@ function EffectsLoader({ power }: { power: number }) {
   }, []);
 
   if (!Effects) return null;
-  const Composer = Effects.EffectComposer || Effects.Composer || Effects.default?.EffectComposer;
-  const Bloom = Effects.Bloom || Effects.UnrealBloomPass || Effects.default?.Bloom;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Composer = Effects.EffectComposer || (Effects as any).Composer || (Effects as any).default?.EffectComposer;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Bloom = Effects.Bloom || (Effects as any).UnrealBloomPass || (Effects as any).default?.Bloom;
   if (!Composer || !Bloom) return null;
   const intensity = Math.min(power / 30, 1) * 1.2;
 
-  // @ts-ignore dynamic
   return (
     <Composer>
-      {/* @ts-ignore */}
       <Bloom luminanceThreshold={0.2} intensity={0.6 + intensity} mipmapBlur luminanceSmoothing={0.02} />
     </Composer>
   );
@@ -258,13 +258,13 @@ export default function Circuit3D({ voltage, resistance, current, power, perform
 
       {!lowPerf && enableBloom && <EffectsLoader power={power} />}
 
-      <Wire start={batteryPos.map((v, i) => (i === 0 ? v + 1.2 : v)) as any} end={topWireStart} color={wireColor} />
+      <Wire start={batteryPos.map((v, i) => (i === 0 ? v + 1.2 : v)) as [number, number, number]} end={topWireStart} color={wireColor} />
       <Wire start={topWireStart} end={topWireEnd} color={wireColor} />
-      <Wire start={topWireEnd} end={resistorPos.map((v, i) => (i === 0 ? v - 1.2 : v)) as any} color={wireColor} />
+      <Wire start={topWireEnd} end={resistorPos.map((v, i) => (i === 0 ? v - 1.2 : v)) as [number, number, number]} color={wireColor} />
 
-      <Wire start={resistorPos.map((v, i) => (i === 0 ? v - 1.2 : v)) as any} end={bottomWireStart} color={wireColor} />
+      <Wire start={resistorPos.map((v, i) => (i === 0 ? v - 1.2 : v)) as [number, number, number]} end={bottomWireStart} color={wireColor} />
       <Wire start={bottomWireStart} end={bottomWireEnd} color={wireColor} />
-      <Wire start={bottomWireEnd} end={batteryPos.map((v, i) => (i === 0 ? v + 1.2 : v)) as any} color={wireColor} />
+      <Wire start={bottomWireEnd} end={batteryPos.map((v, i) => (i === 0 ? v + 1.2 : v)) as [number, number, number]} color={wireColor} />
 
       <ParticleTrail points={[topWireStart, topWireEnd]} speed={speed} count={trailCount} />
       <ParticleTrail points={[bottomWireStart, bottomWireEnd]} speed={speed} count={trailCount} />

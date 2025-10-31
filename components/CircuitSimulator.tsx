@@ -18,20 +18,6 @@ export default function CircuitSimulator() {
   const current = voltage / resistance; // Current (I) = V / R in Amperes (A)
   const power = voltage * current; // Power (P) = V * I in Watts (W)
 
-  // Visual calculations
-  const resistorHeatColor = Math.min((power / 50) * 255, 255); // 0-255 for RGB
-  const resistorCoolColor = 255 - resistorHeatColor;
-  
-  // Wire color based on voltage (0-24V)
-  const voltageRatio = Math.min(voltage / 24, 1); // Normalize 0-1
-  const wireRed = Math.floor(50 + (255 - 50) * voltageRatio); // 50 to 255
-  const wireGreen = Math.floor(50 + (255 - 50) * voltageRatio); // 50 to 255
-  const wireBlue = Math.floor(50 + (0 - 50) * voltageRatio); // 50 to 0 (remove blue at max)
-  const wireColor = `rgb(${wireRed}, ${wireGreen}, ${wireBlue})`;
-  
-  // Glow intensity based on current
-  const glowRadius = Math.min(current * 2, 15);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-7xl space-y-4">
@@ -213,7 +199,7 @@ export default function CircuitSimulator() {
                   <label className="text-white font-medium">Performance Mode</label>
                   <select
                     value={performanceMode}
-                    onChange={(e) => setPerformanceMode(e.target.value as any)}
+                    onChange={(e) => setPerformanceMode(e.target.value as "auto" | "low" | "high")}
                     className="bg-slate-700 text-white rounded px-2 py-1"
                   >
                     <option value="auto">Auto</option>
