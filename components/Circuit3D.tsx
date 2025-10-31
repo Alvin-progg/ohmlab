@@ -207,8 +207,8 @@ export default function Circuit3D({ voltage, resistance, current, power, perform
 
   useEffect(() => {
     const ua = typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
-    const cores = typeof navigator !== "undefined" ? (navigator as any).hardwareConcurrency || 4 : 4;
-    const deviceMemory = typeof navigator !== "undefined" ? (navigator as any).deviceMemory || 4 : 4;
+    const cores = typeof navigator !== "undefined" ? (navigator as Navigator & { hardwareConcurrency?: number }).hardwareConcurrency || 4 : 4;
+    const deviceMemory = typeof navigator !== "undefined" ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory || 4 : 4;
     const isMobile = /Mobi|Android/i.test(ua);
     const autoLow = cores <= 2 || deviceMemory <= 2 || isMobile;
     if (performanceMode === "low") setLowPerf(true);
